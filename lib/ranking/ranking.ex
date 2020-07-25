@@ -1,26 +1,20 @@
 defmodule Ranking.Ranking do
   @key "my_ranking_key"
-  def conn() do
-    {:ok, conn} = Redix.start_link(host: "localhost", port: 6380)
-    conn
-  end
+  @conn_name :redix
 
   def set(name, score) do
-    conn = conn()
-    Redix.command(conn, ["ZADD", @key, score, name])
+    Redix.command(@conn_name, ["ZADD", @key, score, name])
   end
 
   def rank(name) do
-    conn = conn()
-    {:ok, res} = Redix.command(conn, ["ZRANK", @key, name])
+    {:ok, res} = Redix.command(@conn_name, ["ZRANK", @key, name])
 
     # 0オリジンで返ってくるため
     res + 1
   end
 
   def list() do
-    conn = conn()
-    {:ok, res} = Redix.command(conn, ["ZRANGE", @key, 0, -1, "WITHSCORES"])
+    {:ok, res} = Redix.command(@conn_name, ["ZRANGE", @key, 0, -1, "WITHSCORES"])
 
     res
     |> Enum.chunk_every(2)

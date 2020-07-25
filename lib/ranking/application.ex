@@ -9,9 +9,10 @@ defmodule Ranking.Application do
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      RankingWeb.Endpoint
+      RankingWeb.Endpoint,
       # Starts a worker by calling: Ranking.Worker.start_link(arg)
       # {Ranking.Worker, arg},
+      {Redix, host: "localhost", port: 6380, name: :redix}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
